@@ -21,7 +21,7 @@ jobs:
       - run: python pipeline.py
       - run: dbt build --profiles-dir .
       - run: python export_models.py
-      - run: pytest -q
+      - run: python -m pytest -q
       - name: Commit aggregates
         run: |
           git config user.name github-actions[bot]
