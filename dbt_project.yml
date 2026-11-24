@@ -1,0 +1,8 @@
+name: dengue_peru
+version: '1.0.0'
+config-version: 2
+profile: dengue_peru
+model-paths: [models]
+models:
+  dengue_peru:
+    +materialized: table

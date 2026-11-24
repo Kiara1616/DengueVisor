@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+.pytest_cache/
+data/raw/
+*.duckdb
+target/
+logs/
+dbt_packages/
+*.tmp
+.env
+.streamlit/secrets.toml

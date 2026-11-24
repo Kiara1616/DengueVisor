@@ -1,0 +1,7 @@
+dengue_peru:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: data/dengue.duckdb
+      threads: 2

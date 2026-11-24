@@ -1,0 +1,13 @@
+{
+  "source": "https://www.datosabiertos.gob.pe/sites/default/files/datos_abiertos_vigilancia_dengue_2000_2025_0.csv",
+  "generated_at_utc": "2026-11-24T20:03:59.541338+00:00",
+  "source_rows": 1065274,
+  "notifications_in_scope": 719965,
+  "excluded_rows": 345309,
+  "exclusions": {
+    "outside_year_scope": 345309
+  },
+  "aggregate_rows": 6573,
+  "aggregate_sha256": "9b6931f087c063dcace16e69c0acaec4830b7280c07845afd7cebe4d740e5fb1",
+  "scope": "2020-2025; weeks 1-53; C/P/S; nonempty department"
+}

@@ -1,0 +1,17 @@
+version: 2
+models:
+  - name: annual_summary
+    description: Notificaciones anuales por departamento y tipo de diagnóstico.
+    columns:
+      - name: year
+        tests: [not_null]
+      - name: department
+        tests: [not_null]
+      - name: diagnosis
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['C', 'P', 'S']
+      - name: notifications
+        tests: [not_null]
