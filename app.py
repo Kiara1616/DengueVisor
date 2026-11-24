@@ -4,11 +4,17 @@ import pandas as pd
 import plotly.express as px
 import streamlit as st
 
-st.set_page_config(page_title="DengueVisor | Perú", page_icon="◉", layout="wide")
+st.set_page_config(page_title="DengueVisor | Perú", page_icon="🦟", layout="wide")
+if "dark_mode" not in st.session_state:
+    st.session_state.dark_mode = False
+
+def switch_appearance():
+    st.session_state.dark_mode = not st.session_state.dark_mode
+
 with st.sidebar:
-    st.markdown("### ◉ DengueVisor")
-    st.caption("PERÚ · EXPLORADOR HISTÓRICO")
-    dark = st.toggle("Modo oscuro", value=False, key="dark_mode")
+    st.subheader("Apariencia")
+    st.button("☀ Cambiar a modo claro" if st.session_state.dark_mode else "☾ Cambiar a modo oscuro", on_click=switch_appearance, width="stretch", key="appearance_button")
+dark = st.session_state.dark_mode
 bg, surface, ink, muted, border = ("#0e1625", "#18243a", "#edf3fc", "#a8b9cf", "#2d405a") if dark else ("#f3f6fb", "#ffffff", "#172b4d", "#63758c", "#e2e9f2")
 st.markdown(f"""<style>
 .stApp {{background:{bg};color:{ink};--text-color:{ink};--background-color:{bg};--secondary-background-color:{surface};--primary-color:#167c80}}
@@ -43,6 +49,11 @@ button[data-baseweb="tab"][aria-selected="true"] {{background:#e0f3f0;color:#116
 .hero-banner .hero-sub {{color:#e3faf6;max-width:850px}}
 .source-pill {{display:inline-block;border:1px solid #a9dfd780;border-radius:24px;color:white;padding:8px 14px;margin:0 8px 4px 0;font-size:.8rem}}
 [data-testid="stSidebar"] {{background:{'#14262b' if dark else '#edf6f4'}}}
+[data-testid="stSidebarContent"] {{padding-top:1rem}}
+[data-testid="stSidebar"] [data-testid="stVerticalBlock"] {{gap:.65rem}}
+[data-testid="stSidebar"] h3 {{font-size:1.1rem;margin:0;padding:.3rem 0}}
+[data-testid="stSidebar"] [data-testid="stButton"] button {{background:{surface};color:{ink};border:1px solid #16867f;border-radius:10px;min-height:46px;margin-bottom:12px}}
+[data-testid="stSidebar"] [data-testid="stButton"] button:hover {{border-color:#0a6664;box-shadow:0 2px 10px #16867f22}}
 [data-testid="stMetric"] {{min-height:166px;box-shadow:0 8px 24px #163f4108}}
 @media(max-width:700px) {{.hero-banner {{padding:24px 20px}} .hero-banner .hero-title {{font-size:2.4rem}}}}
 </style>""", unsafe_allow_html=True)
@@ -54,8 +65,7 @@ if not path.exists():
 df = pd.read_csv(path)
 metadata = json.loads(path.with_name("metadata.json").read_text(encoding="utf-8"))
 with st.sidebar:
-    st.divider()
-    st.subheader("Explorar datos")
+    st.subheader("Filtros")
     search = st.text_input("Buscar departamento")
     options = [d for d in sorted(df.department.unique()) if search.strip().upper() in d]
     selected = st.multiselect("Departamentos", options, default=options[:1], max_selections=5)
@@ -89,6 +99,10 @@ def show(fig):
             trace.line.width = 3
             trace.marker.size = 5
     fig.update_layout(template="plotly_dark" if dark else "plotly_white",paper_bgcolor=surface,plot_bgcolor=surface,font=dict(color=ink,family="Arial, sans-serif",size=12),height=410,margin=dict(l=24,r=24,t=32,b=24),legend=dict(orientation="h",y=1.14,x=0),hovermode="x unified")
+    if any(trace.type == "pie" for trace in fig.data):
+        fig.update_layout(title=None, margin=dict(l=20,r=20,t=20,b=70),
+                          legend=dict(orientation="h",x=.5,xanchor="center",y=-.08,yanchor="top"), hovermode="closest")
+        fig.update_traces(textinfo="percent", textposition="inside", hovertemplate="%{label}: %{value:,} (%{percent})<extra></extra>")
     fig.update_xaxes(gridcolor=border,zeroline=False,title_font_color=muted)
     fig.update_yaxes(gridcolor=border,zeroline=False,title_font_color=muted)
     st.plotly_chart(fig,width="stretch",theme=None)
@@ -103,7 +117,8 @@ with trend:
     with line_column:
         show(px.line(plot_weekly,x="week",y="notifications",color="year",markers=True,labels={"week":"Semana epidemiológica","notifications":"Notificaciones","year":"Año"}))
     with composition_column:
-        show(px.pie(by_type, names="classification", values="notifications", hole=.72, title="Clasificación diagnóstica"))
+        st.caption("Clasificación diagnóstica")
+        show(px.pie(by_type, names="classification", values="notifications", hole=.72))
     st.caption("El snapshot puede tener cobertura parcial en un año. Una diferencia entre años no demuestra por sí sola una reducción de incidencia.")
 with comparison:
     st.subheader("Comparación de departamentos")
