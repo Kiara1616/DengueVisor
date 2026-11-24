@@ -1,15 +1,32 @@
 # DengueVisor
 
-**Explorador histórico de notificaciones de dengue en Perú · 2020–2025**
+### Datos abiertos de dengue en Perú, convertidos en un explorador reproducible
+
+**Periodo analizado:** 2020–2025 · **Fuente:** MINSA / CDC Perú · **Tecnologías:** Python, dbt, DuckDB, Streamlit y GitHub Actions
 
 [![Calidad y dbt](https://github.com/Kiara1616/DengueVisor/actions/workflows/ci.yml/badge.svg)](https://github.com/Kiara1616/DengueVisor/actions/workflows/ci.yml)
-[![Actualizar datos](https://github.com/Kiara1616/DengueVisor/actions/workflows/update-data.yml/badge.svg)](https://github.com/Kiara1616/DengueVisor/actions/workflows/update-data.yml)
+[![Licencia de los datos: ODC-By](https://img.shields.io/badge/datos-ODC--By-16867f)](https://www.datosabiertos.gob.pe/dataset/vigilancia-epidemiol%C3%B3gica-de-dengue)
 
-Proyecto individual de **Kiara1616** para la Actividad Grupal 01-U2: Data Engineering. Convierte registros abiertos del MINSA en agregados reproducibles y un dashboard para consultar tendencias, comparar departamentos y descargar selecciones. El alcance académico se mantiene aunque la implementación es individual.
+DengueVisor convierte el CSV público de vigilancia epidemiológica del MINSA en un dashboard para analizar notificaciones por departamento, año, semana y clasificación diagnóstica. El pipeline lee la fuente por filas, registra exclusiones, produce agregados sin datos personales y valida un modelo anual con dbt. Es un proyecto individual de [Kiara1616](https://github.com/Kiara1616) para la actividad 01-U2 de Data Engineering.
+
+**Estado:** [código público](https://github.com/Kiara1616/DengueVisor) y [CI verificada](https://github.com/Kiara1616/DengueVisor/actions/workflows/ci.yml). La URL pública de Streamlit, el artículo y el video se añadirán después de publicarlos. La aplicación puede ejecutarse localmente con el snapshot incluido.
+
+> **Uso responsable:** son conteos históricos y provisionales de registros notificados. No equivalen a incidencia por habitante, diagnóstico individual ni predicción epidemiológica.
+
+## Resultados reproducibles del snapshot
+
+| Indicador | Resultado |
+|---|---:|
+| Filas leídas del CSV oficial | 1 065 274 |
+| Notificaciones dentro del alcance 2020–2025 | 719 965 |
+| Filas excluidas por año fuera del alcance | 345 309 |
+| Filas agregadas para el dashboard | 6 573 |
+
+Los valores corresponden al snapshot procesado el **24 de noviembre de 2026**; el archivo fuente utilizado llega a 2025. La fecha de procesamiento no indica que el MINSA haya actualizado los datos ese día. Puedes comprobar los números en [`data/processed/metadata.json`](data/processed/metadata.json), reconstruirlos con `pipeline.py` y verificar su conciliación con `export_models.py`.
 
 ## Problema y propuesta
 
-El MINSA publica un archivo voluminoso de vigilancia epidemiológica. DengueVisor facilita su consulta por año, semana, departamento y clasificación. La solución comprende ingesta, validación, transformación SQL con dbt, pruebas, trazabilidad y actualización automática. Los datos son históricos y provisionales; la app no se presenta como un sistema oficial del MINSA.
+El MINSA publica un archivo voluminoso de vigilancia epidemiológica. DengueVisor facilita su consulta por año, semana, departamento y clasificación. La solución comprende ingesta, validación, transformación SQL con dbt, pruebas y trazabilidad. La actualización programada está configurada en GitHub Actions; su operación pública se verifica en la pestaña Actions.
 
 ## Funciones
 
@@ -37,7 +54,7 @@ flowchart LR
     H --> I[Streamlit Community Cloud: actualización automática]
 ```
 
-El procesamiento ocurre fuera del servidor del dashboard. Este consume archivos pequeños versionados, sin descargar el CSV original en cada visita. No se necesitan servicios, cuentas, llaves ni SDK de AWS.
+El procesamiento ocurre fuera del servidor del dashboard. Este consume archivos pequeños versionados, sin descargar el CSV original en cada visita. La solución usa GitHub y Streamlit Community Cloud para automatización y publicación; no requiere servicios AWS.
 
 ## Fuente, alcance y diccionario
 
