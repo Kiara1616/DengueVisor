@@ -37,8 +37,16 @@ button[data-baseweb="tab"][aria-selected="true"] {{background:#e0f3f0;color:#116
 .eyebrow {{color:#16867f;font-size:.75rem;font-weight:800;letter-spacing:.15em;margin-bottom:12px}}
 .hero-title {{font-size:2.7rem;font-weight:800;letter-spacing:-.045em;line-height:1.15;color:{ink}}}
 .hero-sub {{color:{muted};font-size:1rem;margin:12px 0 26px}}
+.hero-banner {{background:linear-gradient(115deg,#083e42,#087f80 70%,#19a496);border-radius:0 0 26px 26px;padding:32px 36px;margin-bottom:34px;box-shadow:0 16px 32px #063c401c}}
+.hero-banner .eyebrow {{color:#b9f5e9;font-size:.78rem}}
+.hero-banner .hero-title {{color:white;font-size:3.25rem;margin:22px 0}}
+.hero-banner .hero-sub {{color:#e3faf6;max-width:850px}}
+.source-pill {{display:inline-block;border:1px solid #a9dfd780;border-radius:24px;color:white;padding:8px 14px;margin:0 8px 4px 0;font-size:.8rem}}
+[data-testid="stSidebar"] {{background:{'#14262b' if dark else '#edf6f4'}}}
+[data-testid="stMetric"] {{min-height:166px;box-shadow:0 8px 24px #163f4108}}
+@media(max-width:700px) {{.hero-banner {{padding:24px 20px}} .hero-banner .hero-title {{font-size:2.4rem}}}}
 </style>""", unsafe_allow_html=True)
-st.markdown('<div class="eyebrow">DENGUEVISOR · SALUD PÚBLICA Y DATOS ABIERTOS</div><div class="hero-title">Entender los datos.<br>Observar las tendencias.</div><div class="hero-sub">Explorador histórico de notificaciones de dengue en Perú · 2020–2025 · Fuente: MINSA</div>', unsafe_allow_html=True)
+st.markdown('<div class="hero-banner"><div class="eyebrow">OBSERVATORIO DE NOTIFICACIONES · PERÚ</div><div class="hero-title">DengueVisor</div><div class="hero-sub">Explora notificaciones, tendencias y cobertura con el contexto de cada dato.</div><span class="source-pill">Fuente oficial: MINSA / CDC Perú</span><span class="source-pill">Snapshot histórico · 2020–2025</span></div>', unsafe_allow_html=True)
 path = Path(__file__).parent / "data/processed/weekly.csv"
 if not path.exists():
     st.error("Ejecuta python pipeline.py para generar los datos")
@@ -56,10 +64,14 @@ with st.sidebar:
     first,last = st.slider("Semanas",1,53,(1,53))
 filtered = df[df.department.isin(selected)&df.year.isin(years)&df.diagnosis.isin(diagnoses)&df.week.between(first,last)]
 weekly = filtered.groupby(["year","week"],as_index=False).notifications.sum()
-c1,c2,c3 = st.columns(3)
-c1.metric("Notificaciones",f"{filtered.notifications.sum():,}")
-c2.metric("Departamentos",len(selected))
-c3.metric("Semana de mayor registro",f"{int(weekly.loc[weekly.notifications.idxmax(),'week']):02d} / {int(weekly.loc[weekly.notifications.idxmax(),'year'])}" if not weekly.empty else "—")
+st.subheader("Panorama")
+st.caption(f"{', '.join(selected) or 'Sin departamentos'} · Años: {', '.join(map(str, sorted(years))) or 'sin selección'} · Semanas {first:02d}–{last:02d}")
+c1,c2,c3,c4 = st.columns(4)
+c1.metric("Notificaciones",f"{filtered.notifications.sum():,}",help="Conteo de registros para todos los filtros seleccionados.")
+c2.metric("Departamentos",len(selected),help="Hasta cinco departamentos seleccionados; no indica cobertura nacional.")
+c3.metric("Semana de mayor registro",f"{int(weekly.loc[weekly.notifications.idxmax(),'week']):02d} / {int(weekly.loc[weekly.notifications.idxmax(),'year'])}" if not weekly.empty else "—",help="Máximo semanal sumando departamentos y diagnósticos elegidos.")
+c4.metric("Semanas con registros",len(weekly),help="Combinaciones año-semana con al menos un registro; no demuestra cobertura completa.")
+st.caption("Notificaciones registradas, sin ajuste por población. La cobertura disponible puede variar entre años.")
 if filtered.empty:
     st.info("No hay registros para los filtros seleccionados")
     st.stop()

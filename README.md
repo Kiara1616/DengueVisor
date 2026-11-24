@@ -9,7 +9,13 @@
 
 DengueVisor convierte el CSV público de vigilancia epidemiológica del MINSA en un dashboard para analizar notificaciones por departamento, año, semana y clasificación diagnóstica. El pipeline lee la fuente por filas, registra exclusiones, produce agregados sin datos personales y valida un modelo anual con dbt. Es un proyecto individual de [Kiara1616](https://github.com/Kiara1616) para la actividad 01-U2 de Data Engineering.
 
-**Estado:** [código público](https://github.com/Kiara1616/DengueVisor) y [CI verificada](https://github.com/Kiara1616/DengueVisor/actions/workflows/ci.yml). La URL pública de Streamlit, el artículo y el video se añadirán después de publicarlos. La aplicación puede ejecutarse localmente con el snapshot incluido.
+## Acceso al dashboard
+
+**[Abrir DengueVisor en Streamlit](https://denguevisor-peru.streamlit.app/)**. También puedes ejecutarlo [localmente](#instalación-local) con los agregados incluidos. La pantalla inicial muestra un snapshot histórico; el periodo seleccionado y la cobertura disponible acompañan a los indicadores.
+
+[Código público](https://github.com/Kiara1616/DengueVisor) · [Validación automática](https://github.com/Kiara1616/DengueVisor/actions/workflows/ci.yml) · [Fuente y diccionario](#fuente-alcance-y-diccionario) · [Consigna](docs/CONSIGNA.md)
+
+El artículo y el video de construcción se incorporarán cuando estén publicados. El código, las instrucciones y los resultados se pueden consultar sin esperar esas publicaciones.
 
 > **Uso responsable:** son conteos históricos y provisionales de registros notificados. No equivalen a incidencia por habitante, diagnóstico individual ni predicción epidemiológica.
 
@@ -30,7 +36,7 @@ El MINSA publica un archivo voluminoso de vigilancia epidemiológica. DengueViso
 
 ## Funciones
 
-- Modo claro y oscuro; diseño con tarjetas, pestañas y gráficos interactivos.
+- Modo claro y oscuro; encabezado verde azulado, tarjetas con contexto, pestañas y gráficos interactivos.
 - Búsqueda y selección de hasta cinco departamentos.
 - Filtros combinables por años, semanas y diagnósticos C/P/S.
 - Tendencias semanales, composición diagnóstica y comparación territorial.
